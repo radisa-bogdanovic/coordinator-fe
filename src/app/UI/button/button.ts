@@ -9,6 +9,9 @@ import { Component, computed, input, output } from '@angular/core';
 export class Button {
   title = input('Click');
   customClass = input('');
+  type = input<'button' | 'submit'>('button');
+  disabled = input(false);
+
   clicked = output<void>();
 
   buttonClasses = computed(() => {
