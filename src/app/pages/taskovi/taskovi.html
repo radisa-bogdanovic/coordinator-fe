@@ -1,1 +1,25 @@
-<p>taskovi works!</p>
+<section class="p-2 flex gap-4 flex-col">
+  <h1>Taskovi:</h1>
+
+  @if (taskovi.length === 0) {
+    <p>Trenutno nemate ni jedan task!</p>
+  } @else {
+    <div class="flex gap-4 flex-wrap">
+      @for (task of taskovi; track task.id) {
+        <div
+          class="flex flex-col gap-2 p-4 rounded-md border-0 bg-gray-700 text-white w-100 max-w-[300px]"
+        >
+          <h3>Naziv: {{ task.name }}</h3>
+          <span>Prioritet: {{ task.prioritet }}</span>
+          <p>Opis: {{ task.opis }}</p>
+
+          <div class="flex gap-2 justify-end mt-auto">
+            <Button title="Azuriraj" (clicked)="onClick()"></Button
+            ><Button title="Obrisi" (clicked)="onClick()" customClass="bg-red-700"></Button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+  <Button title="Napravi novi task" (clicked)="onClick()"></Button>
+</section>
