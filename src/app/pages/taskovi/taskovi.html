@@ -14,12 +14,12 @@
           <p>Opis: {{ task.opis }}</p>
 
           <div class="flex gap-2 justify-end mt-auto">
-            <Button title="Azuriraj" (clicked)="onClick()"></Button>
-            <Button title="Obrisi" (clicked)="onClick()" customClass="bg-red-700"></Button>
+            <app-button title="Azuriraj" (clicked)="onClick()"></app-button>
+            <app-button title="Obrisi" (clicked)="onClick()" customClass="bg-red-700"></app-button>
           </div>
         </div>
       }
     </div>
   }
-  <Button title="Napravi novi task" (clicked)="onClick()"></Button>
+  <app-button title="Napravi novi task" (clicked)="onClick()"></app-button>
 </section>

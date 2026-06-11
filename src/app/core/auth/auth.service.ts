@@ -18,7 +18,7 @@ export class AuthService {
 
   readonly currentUser = signal<User | null>(this.readUser());
 
-  readonly isAuthenticated = computed(() => !!this.token);
+  readonly isAuthenticated = computed(() => !!this.token());
 
   login(credentials: LoginCredentials): boolean {
     const email = credentials.email.trim().toLowerCase();

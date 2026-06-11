@@ -5,7 +5,7 @@ import { SideNav } from './sideHeader/sideHeader';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SideNav],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
 })
 export class App {
