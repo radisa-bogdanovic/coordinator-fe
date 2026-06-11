@@ -31,7 +31,7 @@ export class Login implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.auth.isAuthenticated()) {
+    if (this.auth.loadSession()) {
       void this.router.navigate(['/dashboard']);
     }
   }
@@ -44,17 +44,20 @@ export class Login implements OnInit {
     }
     this.loading.set(true);
 
-    // const { email, password } = this.form.getRawValue();
-    console.log(this.form.getRawValue());
-    const success = this.auth.login(this.form.getRawValue());
-
-    if (!success) {
-      this.errorMsg.set('Pogresan email ili lozinka');
-      this.loading.set(false);
-      return;
-    }
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    (console.log(returnUrl), console.log(safeReturnUrl(returnUrl)));
-    void this.router.navigateByUrl(safeReturnUrl(returnUrl));
+    this.auth.login(this.form.getRawValue()).subscribe({
+      next: (sucess) => {
+        this.loading.set(false);
+        if (!sucess) {
+          this.errorMsg.set('Pogresan email ili lozinka');
+          return;
+        }
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        void this.router.navigateByUrl(safeReturnUrl(returnUrl));
+      },
+      error: () => {
+        this.loading.set(false);
+        this.errorMsg.set('Pogresan email ili lozinka');
+      },
+    });
   }
 }

@@ -13,3 +13,8 @@ export enum Role {
   ADMIN = 'ADMIN',
   USER = 'USER',
 }
+
+//Be responses
+export type AuthMeResponse = {
+  user: User;
+};

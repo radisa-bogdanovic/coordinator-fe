@@ -1,113 +1,76 @@
-import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoginCredentials, Role, User } from './auth.models';
-import { isPlatformBrowser } from '@angular/common';
-
-const TOKEN_KEY = 'coordinator_access_token';
-const USER_KEY = 'coordinator_user';
-
-const MOCK_EMAIL = 'tictac992@gmail.com';
-const MOCK_PASSWORD = 'test123';
+import { AuthMeResponse, LoginCredentials, User } from './auth.models';
+import { HttpClient } from '@angular/common/http';
+import { API_CONFIG } from '../api/api.config';
+import { catchError, firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly platformId = inject(PLATFORM_ID);
+  private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
 
-  readonly token = signal<string | null>(this.readToken());
+  private readonly baseUrl = API_CONFIG.baseUrl;
 
-  readonly currentUser = signal<User | null>(this.readUser());
+  readonly currentUser = signal<User | null>(null);
 
-  readonly isAuthenticated = computed(() => !!this.token());
+  readonly isAuthenticated = computed(() => this.currentUser() !== null);
 
-  login(credentials: LoginCredentials): boolean {
-    const email = credentials.email.trim().toLowerCase();
-    const password = credentials.password;
-
-    if (email !== MOCK_EMAIL || password !== MOCK_PASSWORD) {
-      this.clearSession();
-      return false;
-    }
-    const user: User = {
-      id: 1,
-      email: MOCK_EMAIL,
-      role: Role.ADMIN,
-    };
-    this.persistSession('mock-access-token', user);
-    return true;
+  loadSession(): Observable<User | null> {
+    return this.http.get<AuthMeResponse>(`${this.baseUrl}${API_CONFIG.auth.me}`).pipe(
+      map((res) => {
+        this.currentUser.set(res.user);
+        return res.user;
+      }),
+      catchError(() => {
+        this.clearLocalState();
+        return of(null);
+      }),
+    );
   }
 
-  logout(): void {
-    this.clearSession();
-    this.router.navigate(['/login']);
+  login(credentails: LoginCredentials): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}${API_CONFIG.auth.login}`, credentails).pipe(
+      switchMap(() => this.loadSession()),
+      map((user) => user !== null),
+      catchError(() => {
+        this.clearLocalState();
+        return of(null);
+      }),
+    );
   }
 
-  getToken(): string | null {
-    return this.token();
+  refreshSession(): Observable<boolean> {
+    return this.http.post<void>(`${this.baseUrl}${API_CONFIG.auth.refresh}`, {}).pipe(
+      map(() => true),
+      catchError(() => {
+        this.clearLocalState();
+        return of(false);
+      }),
+    );
   }
 
-  private persistSession(accessToken: string, user: User): void {
-    this.token.set(accessToken);
-    this.currentUser.set(user);
-
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    localStorage.setItem(TOKEN_KEY, accessToken);
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}${API_CONFIG.auth.logout}`, {}).pipe(
+      tap(() => {
+        this.clearLocalState();
+        void this.router.navigate(['/login']);
+      }),
+      catchError(() => {
+        this.clearLocalState();
+        void this.router.navigate(['/login']);
+        return of(undefined);
+      }),
+    );
   }
 
-  private clearSession(): void {
-    this.token.set(null);
+  async ensureSession(): Promise<boolean> {
+    if (this.isAuthenticated()) true;
+    const user = await firstValueFrom(this.loadSession());
+    return user !== null;
+  }
+
+  clearLocalState(): void {
     this.currentUser.set(null);
-
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-  }
-
-  //   private readFromLs(key: string) {
-  //     if (!isPlatformBrowser(this.platformId)) {
-  //       return null;
-  //     }
-  //     const rawData = localStorage.getItem(key);
-
-  //     if (key === TOKEN_KEY) return rawData;
-
-  //     if (!rawData) {
-  //       return null;
-  //     }
-  //     try {
-  //       return JSON.parse(rawData) as User;
-  //     } catch {
-  //       return null;
-  //     }
-  //   }
-
-  private readToken(): string | null {
-    if (!isPlatformBrowser(this.platformId)) {
-      return null;
-    }
-    return localStorage.getItem(TOKEN_KEY);
-  }
-
-  private readUser(): User | null {
-    if (!isPlatformBrowser(this.platformId)) {
-      return null;
-    }
-    const rawData = localStorage.getItem(USER_KEY);
-
-    if (!rawData) {
-      return null;
-    }
-    try {
-      return JSON.parse(rawData) as User;
-    } catch {
-      return null;
-    }
   }
 }
