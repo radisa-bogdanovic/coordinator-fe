@@ -17,10 +17,11 @@ export class AuthService {
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
 
   loadSession(): Observable<User | null> {
-    return this.http.get<AuthMeResponse>(`${this.baseUrl}${API_CONFIG.auth.me}`).pipe(
+    return this.http.get<User>(`${this.baseUrl}${API_CONFIG.auth.me}`).pipe(
       map((res) => {
-        this.currentUser.set(res.user);
-        return res.user;
+        this.currentUser.set(res);
+
+        return res;
       }),
       catchError(() => {
         this.clearLocalState();
@@ -65,8 +66,9 @@ export class AuthService {
   }
 
   async ensureSession(): Promise<boolean> {
-    if (this.isAuthenticated()) true;
+    if (this.isAuthenticated()) return true;
     const user = await firstValueFrom(this.loadSession());
+
     return user !== null;
   }
 

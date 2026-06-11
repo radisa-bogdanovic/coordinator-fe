@@ -2,20 +2,21 @@ import { HttpErrorResponse, HttpInterceptor, HttpInterceptorFn } from '@angular/
 import { inject } from '@angular/core';
 import { AuthService } from './auth.service';
 import { API_CONFIG } from '../api/api.config';
-import { catchError, finalize, switchMap, throwError } from 'rxjs';
+import { catchError, finalize, shareReplay, switchMap, throwError } from 'rxjs';
 
 let refreshInFlight: ReturnType<AuthService['refreshSession']> | null = null;
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
-  const withCookies = req.clone({ withCredentials: true });
+
+  const withCredsReq = req.clone({ withCredentials: true });
 
   const isAuthEndpoint =
     req.url.includes(API_CONFIG.auth.login) ||
     req.url.includes(API_CONFIG.auth.logout) ||
     req.url.includes(API_CONFIG.auth.refresh);
 
-  return next(withCookies).pipe(
+  return next(withCredsReq).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status !== 401 || isAuthEndpoint) {
         return throwError(() => error);
@@ -23,6 +24,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (!refreshInFlight) {
         refreshInFlight = auth.refreshSession().pipe(
+          shareReplay(1),
           finalize(() => {
             refreshInFlight = null;
           }),
@@ -38,7 +40,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           if (!ok) {
             return throwError(() => error);
           }
-          return next(withCookies);
+          return next(req.clone({ withCredentials: true }));
         }),
       );
     }),

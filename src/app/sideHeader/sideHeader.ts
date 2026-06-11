@@ -32,6 +32,6 @@ export class SideNav {
   }
 
   protected logout(): void {
-    this.auth.logout();
+    this.auth.logout().subscribe();
   }
 }
