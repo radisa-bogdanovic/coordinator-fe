@@ -1,7 +1,6 @@
-import { Component, signal } from '@angular/core';
-
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SideNav } from './sideHeader/sideHeader';
+import { AuthService } from './core/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +9,13 @@ import { SideNav } from './sideHeader/sideHeader';
 })
 export class App {
   protected readonly title = signal('coordinator-fe');
+  protected readonly isInitializing = signal(true);
+
+  private readonly auth = inject(AuthService);
+
+  constructor() {
+    void this.auth.ensureSession().finally(() => {
+      this.isInitializing.set(false);
+    });
+  }
 }

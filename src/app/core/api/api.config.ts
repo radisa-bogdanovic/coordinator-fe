@@ -1,5 +1,7 @@
+import { environment } from '../../../environments/environment';
+
 export const API_CONFIG = {
-  baseUrl: 'https://coordinator-aagl.onrender.com/',
+  baseUrl: environment.apiUrl,
 
   auth: {
     login: 'auth/login',

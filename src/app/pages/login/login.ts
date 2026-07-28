@@ -30,8 +30,10 @@ export class Login implements OnInit {
     }),
   });
 
-  ngOnInit(): void {
-    if (this.auth.loadSession()) {
+  async ngOnInit(): Promise<void> {
+    const isAuthenticated = await this.auth.ensureSession();
+
+    if (isAuthenticated) {
       void this.router.navigate(['/dashboard']);
     }
   }

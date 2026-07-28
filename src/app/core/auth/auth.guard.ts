@@ -15,3 +15,17 @@ export const authGuard: CanActivateFn = async (_route, state) => {
     queryParams: { returnUrl: state.url },
   });
 };
+
+export const loginGuard: CanActivateFn = async (route, state) => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  const ok = await auth.ensureSession();
+
+  if (!ok) {
+    return true;
+  }
+
+  const returnUrl = route.queryParamMap.get('returnUrl') ?? state.url;
+  return router.createUrlTree([returnUrl.startsWith('/') ? returnUrl : `/${returnUrl}`]);
+};

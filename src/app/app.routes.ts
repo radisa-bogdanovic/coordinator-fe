@@ -5,7 +5,7 @@ import { Notes } from './pages/notes/notes';
 import { About } from './pages/about/about';
 import { Login } from './pages/login/login';
 import { AppShell } from './layout/app-shell/app-shell';
-import { authGuard } from './core/auth/auth.guard';
+import { authGuard, loginGuard } from './core/auth/auth.guard';
 
 // export const routes: Routes = [
 //   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
@@ -17,7 +17,7 @@ import { authGuard } from './core/auth/auth.guard';
 // ];
 
 export const routes: Routes = [
-  { path: 'login', component: Login, title: 'Login' },
+  { path: 'login', component: Login, title: 'Login', canActivate: [loginGuard] },
   {
     path: '',
     component: AppShell,

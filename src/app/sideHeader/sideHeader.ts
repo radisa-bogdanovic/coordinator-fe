@@ -32,6 +32,9 @@ export class SideNav {
   }
 
   protected logout(): void {
-    this.auth.logout().subscribe();
+    void this.auth.logout().subscribe({
+      next: () => undefined,
+      error: () => undefined,
+    });
   }
 }
