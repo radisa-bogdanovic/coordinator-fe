@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { Button } from '../UI/button/button';
+import { Button } from '../UI/button/button/button';
 import { AuthService } from '../core/auth/auth.service';
 
 type NavItem = {

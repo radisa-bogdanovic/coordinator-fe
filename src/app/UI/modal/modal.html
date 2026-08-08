@@ -1,0 +1,17 @@
+@if(open()){
+<div
+	class="align-center fixed inset-0 z-10 mx-auto flex items-center justify-center bg-black/50 p-4"
+	(click)="onBackdropClick($event)"
+>
+	<div class="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
+		<div class="mb-4 flex items-center justify-between border-b border-gray-200 pb-3">
+			<span></span>
+			<h2 class="text-lg font-semibold text-gray-900">{{title()}}</h2>
+			<button class="h-8 w-8 rounded-lg text-gray-500 hover:bg-gray-100" type="button" (click)="close.emit()">x</button>
+		</div>
+
+		<ng-content></ng-content>
+		<!--	Ovo je kontenter u koji ce parent ubaaciti kontent	-->
+	</div>
+</div>
+}

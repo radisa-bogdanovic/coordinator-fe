@@ -1,18 +1,5 @@
 @if (isInitializing()) {
-  <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f8fafc; color: #0f172a; font-family: Arial, sans-serif;">
-    <div style="text-align: center;">
-      <div style="width: 40px; height: 40px; border: 4px solid #cbd5e1; border-top-color: #2563eb; border-radius: 50%; margin: 0 auto 12px; animation: spin 1s linear infinite;"></div>
-      <div>Učitavanje...</div>
-    </div>
-  </div>
+<app-loader class="flex min-h-screen items-center justify-center" title="Sacekajte momenat "></app-loader>
 } @else {
-  <router-outlet></router-outlet>
+<router-outlet></router-outlet>
 }
-
-<style>
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-</style>

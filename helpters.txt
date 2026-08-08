@@ -1,4 +1,4 @@
 ng generate component name  - sa ovim pravimo preko CLI nase komponente
 
 
-ng serve - sa ovim pokrecemo app
+ng serve --port 6767 - sa ovim pokrecemo app
