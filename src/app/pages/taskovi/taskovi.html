@@ -1,7 +1,7 @@
-<section class="flex flex-col gap-4 p-2">
+<section class="flex h-full flex-col gap-4 p-2">
 	<h1>Taskovi:</h1>
 	@if(loading()){
-	<p>Ucitavamooooo...</p>
+	<app-loader class="flex h-full items-center justify-center" title="Ucitavanje taskova"></app-loader>
 	} @else{ @if ( taskovi().length === 0) {
 	<p>Trenutno nemate ni jedan task!</p>
 	} @else {
