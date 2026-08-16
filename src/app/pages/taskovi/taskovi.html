@@ -13,17 +13,17 @@
 			<p>Opis: {{ task.opis }}</p>
 
 			<div class="mt-auto flex justify-end gap-2">
-				<app-button title="Azuriraj" (clicked)="onClick()"></app-button>
-				<app-button title="Obrisi" (clicked)="onClick()" customClass="bg-red-700"></app-button>
+				<app-button title="Azuriraj" (clicked)="onClick(ModalType.update)"></app-button>
+				<app-button title="Obrisi" (clicked)="onClick(ModalType.delete)" customClass="bg-red-700"></app-button>
 			</div>
 		</div>
 		}
 	</div>
 	}
-	<app-button title="Napravi novi task" (clicked)="onClick()"></app-button>
+	<app-button title="Napravi novi task" (clicked)="onClick(ModalType.create)"></app-button>
 	}
 </section>
 
-<app-modal (close)="closeModal()" [open]="modalIsOpen()" title="Hej, pa ja radim">
+<app-modal (close)="closeModal()" [open]="modalIsOpen()" [title]="modalTitle()">
 	<app-loader title=""></app-loader>
 </app-modal>

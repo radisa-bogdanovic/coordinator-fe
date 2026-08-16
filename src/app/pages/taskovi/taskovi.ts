@@ -1,6 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { ModalType } from '../../core/models/modal.models';
 import { Task } from '../../core/models/task.models';
 import { TaskoviService } from '../../core/services/taskovi.sevice';
+import { getModalTitle } from '../../core/utils/getModalTitle';
 import { Button } from '../../UI/button/button/button';
 import { Loader } from '../../UI/loader/loader';
 import { Modal } from '../../UI/modal/modal';
@@ -17,8 +19,10 @@ export class Taskovi implements OnInit {
 	protected readonly loading = signal(false);
 	protected readonly taskovi = signal<Task[]>([]);
 	protected readonly modalIsOpen = signal(false);
-	protected activeTask = signal(null);
+	protected readonly modalTitle = signal<string>('');
 
+	protected activeTask = signal(null);
+	protected ModalType = ModalType;
 	ngOnInit(): void {
 		this.loading.set(true);
 		this.TasksService.getTasks().subscribe({
@@ -35,7 +39,8 @@ export class Taskovi implements OnInit {
 		});
 	}
 
-	protected onClick() {
+	protected onClick(modalType: ModalType) {
+		this.modalTitle.set(getModalTitle(modalType, 'task'));
 		this.modalIsOpen.set(true);
 	}
 

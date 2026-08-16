@@ -1,47 +1,42 @@
 <aside
-  class="flex shrink-0 flex-col gap-3 bg-gray-900 p-3 py-4 text-gray-50 transition-[width] duration-400 ease-out min-h-dvh"
-  [ngClass]="collapsed() ? 'w-[60px]' : 'w-55'"
+	class="flex min-h-dvh shrink-0 flex-col gap-3 bg-gray-900 p-3 py-4 text-gray-50 transition-[width] duration-400 ease-out"
+	[ngClass]="collapsed() ? 'w-[60px]' : 'w-55'"
 >
-  <div class="flex flex-row items-center">
-    <button
-      class="h-9 w-9 shrink-0 cursor-pointer rounded-lg border-0 bg-gray-700 text-md text-gray-50 hover:bg-gray-500"
-      type="button"
-      (click)="toggleCollapsed()"
-    >
-      {{ collapsed() ? '>' : '<' }}
-    </button>
+	<div class="flex flex-row items-center">
+		<button
+			class="text-md h-9 w-9 shrink-0 cursor-pointer rounded-lg border-0 bg-gray-700 text-gray-50 hover:bg-gray-500"
+			type="button"
+			(click)="toggleCollapsed()"
+		>
+			{{ collapsed() ? '>' : '<' }}
+		</button>
 
-    @if (!collapsed()) {
-      <h2 class="px-2 text-base font-semibold leading-none">Coordinator</h2>
-    }
-  </div>
+		@if (!collapsed()) {
+		<h2 class="px-2 text-base leading-none font-semibold">Coordinator</h2>
+		}
+	</div>
 
-  <nav class="flex flex-col gap-2">
-    @for (item of navItems; track item.label) {
-      <a
-        class="block rounded-lg px-3 py-2 text-sm text-gray-200 no-underline transition-colors hover:bg-gray-800"
-        [routerLink]="item.path"
-        routerLinkActive="bg-blue-600 text-white"
-      >
-        @if (!collapsed()) {
-          <span>{{ item.label }}</span>
-        } @else {
-          <span>{{ item.label.charAt(0) }}</span>
-        }
-      </a>
-    }
-  </nav>
+	<nav class="flex flex-col gap-2">
+		@for (item of navItems; track item.label) {
+		<a
+			class="block rounded-lg px-3 py-2 text-sm text-gray-200 no-underline transition-colors hover:bg-gray-800"
+			[routerLink]="item.path"
+			routerLinkActive="bg-blue-600 text-white"
+		>
+			@if (!collapsed()) {
+			<span>{{ item.label }}</span>
+			} @else {
+			<span>{{ item.label.charAt(0) }}</span>
+			}
+		</a>
+		}
+	</nav>
 
-  <div class="mt-auto flex fle gap-2 border-t border-gray-700 pt-3 items-center">
-    @if (!collapsed() && user(); as user) {
-      <span class="truncate text-xs text-gray-400" [title]="user.email">{{ user.email }}</span>
-    }
+	<div class="mt-auto flex items-center justify-between gap-2 border-t border-gray-700 pt-3">
+		@if (!collapsed() && user(); as user) {
+		<span class="truncate text-xs text-gray-400" [title]="user.email">{{ user.email }}</span>
+		}
 
-    <app-button
-      (clicked)="logout()"
-      [title]="!collapsed() ? 'Odjavi se' : 'X'"
-      customClass="text-xs"
-    >
-    </app-button>
-  </div>
+		<app-button (clicked)="logout()" [title]="!collapsed() ? 'Odjavi se' : 'X'" customClass="text-xs"></app-button>
+	</div>
 </aside>
