@@ -1,6 +1,9 @@
 import { ModalType } from '../models/modal.models';
 
-export function getModalTitle(modalType: ModalType, category: 'task' | 'note') {
+export function getModalTitle(modalType: ModalType | null, category: 'task' | 'note' | null): string {
+	console.log(modalType, category);
+	if (modalType === null || category === null) return '';
+
 	let title = '';
 	const categoryName = category === 'note' ? ` note` : ` task`;
 

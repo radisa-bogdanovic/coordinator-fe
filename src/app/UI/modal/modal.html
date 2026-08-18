@@ -9,9 +9,60 @@
 			<h2 class="text-lg font-semibold text-gray-900">{{title()}}</h2>
 			<button class="h-8 w-8 rounded-lg text-gray-500 hover:bg-gray-100" type="button" (click)="close.emit()">x</button>
 		</div>
+		<!-- <app-loader title=""></app-loader> -->
 
-		<ng-content></ng-content>
-		<!--	Ovo je kontenter u koji ce parent ubaaciti kontent	-->
+		@if(modalType() && modalType()===ModalType.delete){
+		<div class="flex flex-col gap-2 pt-4">
+			<p>Da li ste sigurni da zelite da obrisete {{category()}}?</p>
+			<p>Ova akcija se ne moze ponistiti</p>
+		</div>
+		<div class="flex justify-end gap-2 pt-4">
+			<app-button title="Otkazi" (clicked)="onClose()" [disabled]="loading()"></app-button>
+			<app-button title="Obrisi" (clicked)="onAction()" [disabled]="loading()"></app-button>
+		</div>
+		} @else {
+
+		<form class="flex flex-col gap-4" [formGroup]="formTask" (ngSubmit)="onAction()">
+			<div class="flex flex-col gap-1">
+				<label class="text-sm text-gray-700" for="task-name">Naziv</label>
+				<input
+					class="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+					id="task-name"
+					type="text"
+					formControlName="name"
+					[disabled]="loading()"
+				/>
+			</div>
+			<div class="flex flex-col gap-1">
+				<label class="text-sm text-gray-700" for="task-opis">Opis</label>
+				<textarea
+					class="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+					id="task-opis"
+					type="text"
+					formControlName="opis"
+					rows="3"
+					[disabled]="loading()"
+				></textarea>
+			</div>
+			<div class="flex flex-col gap-1">
+				<label class="text-sm text-gray-700" for="task-prioritet">Prioritet</label>
+				<select
+					class="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+					id="task-prioritet"
+					formControlName="prioritet"
+					[disabled]="loading()"
+				>
+					@for(p of prioriteti; track p){
+					<option [value]="p">{{p}}</option>
+					}
+				</select>
+			</div>
+			<div class="flex justify-end gap-2 pt-4">
+				<app-button title="Odustani" (clicked)="onClose()" [disabled]="loading()"></app-button>
+				<app-button title="Prihvati" type="submit" [disabled]="loading()"></app-button>
+			</div>
+		</form>
+		}
 	</div>
 </div>
 }

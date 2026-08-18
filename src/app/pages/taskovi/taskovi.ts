@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { ModalType } from '../../core/models/modal.models';
 import { Task } from '../../core/models/task.models';
 import { TaskoviService } from '../../core/services/taskovi.sevice';
-import { getModalTitle } from '../../core/utils/getModalTitle';
 import { Button } from '../../UI/button/button/button';
 import { Loader } from '../../UI/loader/loader';
 import { Modal } from '../../UI/modal/modal';
@@ -15,17 +15,22 @@ import { Modal } from '../../UI/modal/modal';
 	standalone: true,
 })
 export class Taskovi implements OnInit {
-	private readonly TasksService = inject(TaskoviService);
-	protected readonly loading = signal(false);
+	private readonly tasksService = inject(TaskoviService);
+	protected loading = signal(false);
 	protected readonly taskovi = signal<Task[]>([]);
 	protected readonly modalIsOpen = signal(false);
-	protected readonly modalTitle = signal<string>('');
+	protected readonly modalTypeValue = signal<ModalType | null>(null);
 
-	protected activeTask = signal(null);
+	protected activeTask = signal<Task | null>(null);
 	protected ModalType = ModalType;
+
 	ngOnInit(): void {
+		this.loadTasks();
+	}
+
+	loadTasks() {
 		this.loading.set(true);
-		this.TasksService.getTasks().subscribe({
+		this.tasksService.getTasks().subscribe({
 			next: tasks => {
 				this.taskovi.set(tasks);
 			},
@@ -39,12 +44,39 @@ export class Taskovi implements OnInit {
 		});
 	}
 
-	protected onClick(modalType: ModalType) {
-		this.modalTitle.set(getModalTitle(modalType, 'task'));
+	protected onActionClick(modalType: ModalType, task?: Task) {
+		this.activeTask.set(task ?? null);
+
+		this.modalTypeValue.set(modalType);
 		this.modalIsOpen.set(true);
 	}
 
 	protected closeModal() {
 		this.modalIsOpen.set(false);
+	}
+
+	async onModalAction(event: { type: ModalType; data?: Partial<Task> }) {
+		try {
+			this.loading.set(true);
+			switch (event.type) {
+				case ModalType.create:
+					await firstValueFrom(this.tasksService.createTask(event.data as Task));
+					break;
+				case ModalType.update:
+					await firstValueFrom(this.tasksService.updateTask(this.activeTask()!.id, event.data!));
+					break;
+
+				case ModalType.delete:
+					await firstValueFrom(this.tasksService.deleteTask(this.activeTask()!.id));
+					break;
+			}
+			this.modalIsOpen.set(false);
+			this.activeTask.set(null);
+			this.loadTasks();
+			this.loading.set(false);
+		} catch (err: any) {
+			this.loading.set(false);
+			console.log(err);
+		}
 	}
 }

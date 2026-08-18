@@ -13,7 +13,7 @@ export const API_CONFIG = {
 	},
 	taskovi: {
 		sviTaskovi: `${taskPrefix}/svi-taskovi`,
-		byId: (id: number) => `${taskPrefix}/${id}`,
+		byId: (id: string) => `${taskPrefix}/${id}`,
 		napraviTask: `${taskPrefix}/napravi`,
 	},
 } as const;

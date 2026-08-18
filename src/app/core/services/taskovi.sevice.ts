@@ -14,11 +14,15 @@ export class TaskoviService {
 		return this.http.get<Task[]>(`${this.baseUrl}${API_CONFIG.taskovi.sviTaskovi}`, {});
 	}
 
-	updateTask(id: number, task: Partial<Task>): Observable<Task> {
+	updateTask(id: string, task: Partial<Task>): Observable<Task> {
 		return this.http.patch<Task>(`${this.baseUrl}${API_CONFIG.taskovi.byId(id)}`, task);
 	}
 
-	deleteTaks(id: number): Observable<void> {
+	deleteTask(id: string): Observable<void> {
 		return this.http.delete<void>(`${this.baseUrl}${API_CONFIG.taskovi.byId(id)}`);
+	}
+
+	createTask(task: Task): Observable<Task> {
+		return this.http.post<Task>(`${this.baseUrl}${API_CONFIG.taskovi.napraviTask}`, task);
 	}
 }
